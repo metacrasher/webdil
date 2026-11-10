@@ -24,13 +24,15 @@ function contactIcon(type){
 function imageUrl(raw){
  const value=String(raw||"").trim();if(!value)return "";
  try{
-  const u=new URL(value);
-  if(u.hostname==="drive.google.com"||u.hostname==="www.drive.google.com"){
-   const parts=u.pathname.split("/");if(!id&&parts[1]==="file"&&parts[2]==="d")id=parts[3];
-   if(!id&&match)id=match[1];
-   if(id)return "https://drive.google.com/thumbnail?id="+encodeURIComponent(id)+"&sz=w1200";
+  const u=new URL(value),host=u.hostname.toLowerCase();
+  if(["drive.google.com","www.drive.google.com","drive.usercontent.google.com"].includes(host)){
+   const m=u.pathname.match(/\/(?:file\/)?d\/([^/]+)/);
+   const id=u.searchParams.get("id")||(m&&m[1]);
+   if(id)return "https://drive.google.com/thumbnail?id="+encodeURIComponent(id)+"&sz=w1600";
   }
-  if(u.hostname.endsWith("dropbox.com")){u.hostname="dl.dropboxusercontent.com";u.searchParams.delete("dl");u.searchParams.set("raw","1");return u.toString()}
+  if(host==="dropbox.com"||host==="www.dropbox.com"){
+   u.hostname="dl.dropboxusercontent.com";u.searchParams.delete("dl");u.searchParams.set("raw","1");return u.toString();
+  }
   if(u.protocol==="http:"||u.protocol==="https:")return u.toString();
  }catch(e){}
  return "";

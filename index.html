@@ -3,15 +3,37 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#090d15">
-<title>FadStore — Admin Dashboard</title>
+<title>FadStore — Jual Beli Akun Game</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="login-view" class="login-screen">
-  <div class="login-art"><div class="login-orb"></div><div class="login-brand"><span class="brand-mark">F</span><span>FAD<span>STORE</span><small>GAME ACCOUNT MARKET</small></span></div><div class="login-message"><div class="eyebrow">PRIVATE ADMIN AREA</div><h1>MANAGE<br><em>YOUR STORE.</em></h1><p>Kelola katalog, stok, dan pesanan FadStore dalam satu dashboard.</p></div><div class="login-bottom">FREE FIRE&nbsp; • &nbsp;MOBILE LEGENDS&nbsp; • &nbsp;ROBLOX</div></div>
-  <div class="login-form-wrap"><form id="login-form" class="login-form"><div class="eyebrow">WELCOME BACK</div><h2>Admin Login</h2><p>Masuk ke panel pengelolaan FadStore.</p><label>Email admin<input id="login-email" type="email" autocomplete="username" placeholder="admin@email.com" required></label><label>Password<input id="login-password" type="password" autocomplete="current-password" placeholder="Masukkan password" required></label><button class="btn primary full" type="submit">Masuk Dashboard <span>↗</span></button><div id="login-error" class="error"></div><small class="login-help">Belum menghubungkan Supabase? Ikuti petunjuk di <b>README-PANDUAN.md</b>.</small></form></div>
+<div id="store-view" class="storefront">
+  <header class="store-header">
+    <a class="brand" href="#"><span class="brand-mark">F</span><span>FAD<span>STORE</span><small>GAME ACCOUNT MARKET</small></span></a>
+    <nav><a href="#katalog">Katalog Akun</a><a href="#cara-order">Cara Order</a></nav>
+    <button id="open-admin-login" class="btn secondary">Login Admin <span>↗</span></button>
+  </header>
+  <section class="store-hero">
+    <div class="hero-copy"><div class="eyebrow">WELCOME TO FADSTORE</div><h1>Temukan akun game<br><em>impianmu.</em></h1><p>Pilih akun favoritmu, cek stok yang tersedia, lalu hubungi admin untuk proses pembelian yang mudah dan aman.</p><a class="btn primary" href="#katalog">Lihat Katalog <span>↓</span></a><div class="hero-tags"><span>FREE FIRE</span><span>MOBILE LEGENDS</span><span>ROBLOX</span></div></div>
+    <div class="hero-art"><div class="hero-glow"></div><div class="hero-card"><span class="hero-card-label">FADSTORE COLLECTION</span><div class="hero-game-symbol">F</div><b>LEVEL UP<br>YOUR GAME.</b><small>AKUN PILIHAN • STOK TERSEDIA</small></div></div>
+  </section>
+  <section class="catalog-section" id="katalog">
+    <div class="catalog-heading"><div><div class="eyebrow">AVAILABLE COLLECTION</div><h2>Katalog Akun Game</h2><p>Lihat akun yang sedang ready dan pilih yang cocok untukmu.</p></div><span class="ready-counter" id="public-stock-count">Memuat stok...</span></div>
+    <div class="catalog-tools"><input id="public-search" placeholder="Cari nama akun..."><select id="public-game-filter"><option value="all">Semua Game</option><option>Free Fire</option><option>Mobile Legends</option><option>Roblox</option></select></div>
+    <div id="public-products" class="public-product-grid"><div class="catalog-loading">Memuat katalog FadStore...</div></div>
+  </section>
+  <section class="how-order" id="cara-order"><div><div class="eyebrow">SIMPLE & EASY</div><h2>Cara Order</h2><p>Pilih akun yang tersedia, tekan tombol pesan, lalu lanjutkan percakapan dengan admin FadStore melalui WhatsApp.</p></div><div class="order-steps"><div><b>01</b><span>Pilih akun game</span></div><div><b>02</b><span>Hubungi admin</span></div><div><b>03</b><span>Konfirmasi detail akun</span></div></div></section>
+  <footer class="store-footer"><a class="brand" href="#"><span class="brand-mark">F</span><span>FAD<span>STORE</span><small>GAME ACCOUNT MARKET</small></span></a><span>© 2026 FadStore. All rights reserved.</span><a href="https://t.me/fadstore" target="_blank" rel="noopener">Telegram @fadstore</a></footer>
 </div>
-
+<div class="admin-login-backdrop" id="admin-login-panel">
+  <button class="login-scrim" type="button" data-close-login aria-label="Tutup login admin"></button>
+  <aside class="admin-login-drawer">
+    <button type="button" class="drawer-close" data-close-login aria-label="Tutup">×</button>
+    <div class="eyebrow">PRIVATE ADMIN AREA</div><h2>Login Admin</h2><p>Masuk untuk mengelola produk, stok, dan pesanan FadStore.</p>
+    <form id="login-form" class="login-form"><label>Email admin<input id="login-email" type="email" autocomplete="username" placeholder="admin@email.com" required></label><label>Password<input id="login-password" type="password" autocomplete="current-password" placeholder="Masukkan password" required></label><button class="btn primary full" type="submit">Masuk Dashboard <span>↗</span></button><div id="login-error" class="error"></div></form>
+    <small class="login-help">Area ini khusus administrator FadStore. Pembeli tidak perlu login untuk melihat katalog.</small>
+  </aside>
+</div>
 <div id="app-view" class="app-shell" hidden>
   <aside class="sidebar" id="sidebar">
     <a class="brand" href="#"><span class="brand-mark">F</span><span>FAD<span>STORE</span><small>ADMIN CONSOLE</small></span></a>

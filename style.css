@@ -377,3 +377,5 @@ body{background:#080d18;font-family:Inter,"Segoe UI",Arial,sans-serif}
  .slider-controls span{max-width:75px;text-align:center}
  .hero-copy h1{font-size:34px!important}
 }
+
+.login-text-link{display:block;margin:13px auto 0;padding:5px 0;border:0;background:none;color:#f17b8d;font-size:11px;cursor:pointer}.login-text-link:hover{color:#fff;text-decoration:underline}.login-form[hidden]{display:none}

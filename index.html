@@ -29,8 +29,11 @@
   <button class="login-scrim" type="button" data-close-login aria-label="Tutup login admin"></button>
   <aside class="admin-login-drawer">
     <button type="button" class="drawer-close" data-close-login aria-label="Tutup">×</button>
-    <div class="eyebrow">PRIVATE ADMIN AREA</div><h2>Login Admin</h2><p>Masuk untuk mengelola produk, stok, dan pesanan FadStore.</p>
-    <form id="login-form" class="login-form"><label>Email admin<input id="login-email" type="email" autocomplete="username" placeholder="admin@email.com" required></label><label>Password<input id="login-password" type="password" autocomplete="current-password" placeholder="Masukkan password" required></label><button class="btn primary full" type="submit">Masuk Dashboard <span>↗</span></button><div id="login-error" class="error"></div></form>
+    <div class="eyebrow">PRIVATE ADMIN AREA</div>
+    <h2 id="login-title">Login Admin</h2><p id="login-description">Masuk untuk mengelola produk, stok, dan pesanan FadStore.</p>
+    <form id="login-form" class="login-form"><label>Email admin<input id="login-email" type="email" autocomplete="username" placeholder="admin@email.com" required></label><label>Password<input id="login-password" type="password" autocomplete="current-password" placeholder="Masukkan password" required></label><button class="btn primary full" type="submit">Masuk Dashboard <span>↗</span></button><button type="button" id="forgot-password" class="login-text-link">Lupa Password?</button><div id="login-error" class="error" role="status"></div></form>
+    <form id="reset-email-form" class="login-form" hidden><label>Email admin<input id="reset-email" type="email" autocomplete="email" placeholder="admin@email.com" required></label><button class="btn primary full" type="submit">Kirim Tautan Reset</button><div id="reset-email-message" class="error" role="status"></div><button type="button" class="login-text-link" data-login-mode="login">← Kembali ke Login</button></form>
+    <form id="new-password-form" class="login-form" hidden><label>Password baru<input id="new-password" type="password" autocomplete="new-password" minlength="8" placeholder="Minimal 8 karakter" required></label><label>Konfirmasi password<input id="confirm-password" type="password" autocomplete="new-password" minlength="8" placeholder="Ulangi password baru" required></label><button class="btn primary full" type="submit">Simpan Password Baru</button><div id="new-password-message" class="error" role="status"></div></form>
     <small class="login-help">Area ini khusus administrator FadStore. Pembeli tidak perlu login untuk melihat katalog.</small>
   </aside>
 </div>

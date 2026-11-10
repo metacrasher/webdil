@@ -26,7 +26,7 @@ function imageUrl(raw){
  try{
   const u=new URL(value);
   if(u.hostname==="drive.google.com"||u.hostname==="www.drive.google.com"){
-   let id=u.searchParams.get("id");const match=u.pathname.match(/\\/file\\/d\\/([^/]+)/);
+   const parts=u.pathname.split("/");if(!id&&parts[1]==="file"&&parts[2]==="d")id=parts[3];
    if(!id&&match)id=match[1];
    if(id)return "https://drive.google.com/thumbnail?id="+encodeURIComponent(id)+"&sz=w1200";
   }

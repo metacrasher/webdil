@@ -17,3 +17,57 @@
 .admin-login-backdrop{position:fixed;inset:0;z-index:100;visibility:hidden;pointer-events:none}.admin-login-backdrop.open{visibility:visible;pointer-events:auto}.login-scrim{position:absolute;inset:0;width:100%;height:100%;border:0;background:#02050bd9;opacity:0;transition:opacity .25s}.admin-login-backdrop.open .login-scrim{opacity:1}.admin-login-drawer{position:absolute;right:0;top:0;height:100%;width:min(430px,100%);background:#101824;border-left:1px solid #354258;padding:85px 38px 30px;transform:translateX(105%);transition:transform .3s ease;box-shadow:-20px 0 70px #0008}.admin-login-backdrop.open .admin-login-drawer{transform:translateX(0)}.drawer-close{position:absolute;top:22px;right:25px;border:0;background:none;color:#aab6c8;font-size:29px}.admin-login-drawer h2{font-size:30px;margin:12px 0 8px}.admin-login-drawer>p{font-size:11px;line-height:1.7;color:#94a2b6;margin-bottom:35px}.admin-login-drawer .login-form{width:100%}.admin-login-drawer .login-help{line-height:1.8}
 @media(max-width:900px){.public-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.store-hero{padding-left:6vw;padding-right:6vw}}
 @media(max-width:650px){.store-header{height:68px;padding:0 16px}.store-header nav{display:none}.store-header>.btn{font-size:9px;padding:10px}.store-hero{grid-template-columns:1fr;padding:45px 23px 25px;gap:8px}.hero-art{min-height:210px}.hero-card{height:190px;width:230px;padding:17px}.hero-game-symbol{font-size:65px}.hero-card>b{font-size:20px}.hero-tags{gap:10px;font-size:7px}.catalog-section{padding:42px 17px 50px}.catalog-heading{align-items:flex-start;flex-direction:column}.catalog-heading h2{font-size:23px}.catalog-tools{flex-direction:column}.catalog-tools input,.catalog-tools select{width:100%}.public-product-grid{grid-template-columns:1fr 1fr;gap:9px}.public-product-image{height:125px}.public-product-info{padding:11px}.public-product-info h3{font-size:11px;min-height:27px}.public-product-info p{font-size:8px}.public-product-bottom{align-items:flex-start;flex-direction:column}.public-product-bottom>b{font-size:12px}.public-product-bottom .btn{width:100%;justify-content:center}.how-order{grid-template-columns:1fr;padding:35px 20px;gap:20px}.order-steps{gap:6px}.order-steps>div{padding:11px}.order-steps span{font-size:8px}.store-footer{flex-wrap:wrap;padding:20px}.store-footer>span{order:3;width:100%}.admin-login-drawer{padding:75px 25px 25px}}
+
+
+/* FadStore visual refresh */
+:root{--bg:#080d18;--surface:#111b2b;--surface2:#17253a;--line:#263750;--red:#ff4d6d;--green:#42d6a0}
+body{background:#080d18;font-family:Inter,"Segoe UI",Arial,sans-serif}
+.storefront{background:radial-gradient(ellipse at 80% 0%,#202c50 0,transparent 35%),#080d18}
+.store-header{height:82px;background:#0b1220ef;backdrop-filter:blur(14px);border-bottom-color:#26354c}
+.brand-mark{border-radius:10px;clip-path:none;box-shadow:0 8px 24px #ff4d6d44}
+.store-hero{min-height:490px;background:radial-gradient(ellipse at 78% 50%,#233d67 0,transparent 32%),linear-gradient(115deg,#111c30,#12182a 62%,#25182d);padding-top:76px;padding-bottom:76px}
+.hero-copy h1{letter-spacing:-3.5px}
+.hero-copy h1 em{background:linear-gradient(90deg,#ff5876,#ff9b70);background-clip:text;-webkit-background-clip:text;color:transparent}
+.hero-card{border-radius:18px;background:linear-gradient(145deg,#293b62,#171d32 75%);border-color:#50668f;box-shadow:0 35px 90px #0009}
+.hero-game-symbol{color:#ff6680}
+.hero-tags{gap:10px}
+.game-brand{display:inline-flex;align-items:center;gap:8px;border:1px solid #35445e;background:#17243a;padding:9px 12px;border-radius:999px;color:#c7d4e8;letter-spacing:.8px}
+.game-brand b{display:grid;place-items:center;width:25px;height:25px;border-radius:7px;color:white;font-size:10px;letter-spacing:-.5px}
+.ff-brand b{background:linear-gradient(135deg,#f6a13a,#e34d35);font-style:italic}
+.ml-brand b{background:linear-gradient(135deg,#4fc7ff,#7557e8)}
+.roblox-brand b{background:#f1f4fa;color:#141b28;font-size:18px}
+.catalog-section{padding-top:75px;padding-bottom:85px}
+.catalog-heading h2,.how-order h2{font-size:clamp(25px,3vw,34px);letter-spacing:-.8px}
+.ready-counter{border-radius:999px;padding:10px 15px}
+.catalog-tools input,.catalog-tools select{border-radius:9px;background:#101b2c;border-color:#30415b;padding:14px}
+.public-product-grid{gap:20px}
+.public-product-card{border-radius:13px;background:linear-gradient(160deg,#142137,#101827);border-color:#2b3c57;box-shadow:0 12px 35px #0002}
+.public-product-card:hover{transform:translateY(-5px);border-color:#657fa9;box-shadow:0 18px 42px #0005}
+.public-product-image{height:205px;background:radial-gradient(circle at 50% 40%,#34496e,#172338 72%)}
+.public-product-image>img{display:block;object-fit:cover}
+.public-product-image.image-failed:after{content:"FADSTORE";font-size:22px;font-weight:900;letter-spacing:5px;color:#8298bc}
+.product-placeholder b{font-size:64px;color:#ff647e}
+.public-product-info{padding:19px}
+.game-label{display:inline-block;padding:5px 8px;border-radius:5px;background:#27344d;color:#a9c6f7}
+.public-product-info h3{font-size:15px}
+.public-product-info p{height:34px;font-size:10px}
+.public-product-bottom{align-items:flex-start;flex-direction:column;gap:12px}
+.public-product-bottom>b{font-size:17px}
+.product-contact-actions{display:flex;width:100%;gap:8px}
+.contact-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex:1;min-width:0;padding:10px 8px;border-radius:8px;text-decoration:none;font-size:10px;font-weight:800;transition:transform .18s,filter .18s}
+.contact-btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.contact-btn svg{width:16px;height:16px;fill:currentColor}
+.wa-btn{background:#0d754e;color:#fff}
+.tg-btn{background:#147caf;color:#fff}
+.how-order{background:linear-gradient(110deg,#111d31,#101827);border-top:1px solid #263750;border-bottom:1px solid #263750}
+.order-steps>div{border-radius:10px;background:#17263c}
+.store-footer{min-height:105px}
+.footer-social{display:flex;gap:9px}
+.social-link{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border-radius:8px;text-decoration:none;font-size:10px;font-weight:800}
+.telegram-link{background:#123c57;color:#8bd7ff}
+.whatsapp-link{background:#123f32;color:#7be4b3}
+.social-icon{font-size:15px}
+.preview-store-btn{padding:9px 12px;font-size:9px;white-space:nowrap}
+.top-right{gap:10px}
+@media(max-width:900px){.store-hero{padding-left:6vw;padding-right:6vw}.public-product-grid{gap:13px}}
+@media(max-width:650px){.game-brand{font-size:7px;padding:7px 8px}.game-brand b{width:21px;height:21px}.store-hero{padding:45px 23px 25px}.public-product-image{height:135px}.public-product-info{padding:12px}.product-contact-actions{flex-direction:column}.contact-btn{width:100%}.preview-store-btn{font-size:8px;padding:8px}.top-right{gap:5px}}

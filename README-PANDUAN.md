@@ -41,14 +41,15 @@ window.FADSTORE_CONFIG = {
 - Dashboard login: buka URL website. Login memakai email/password yang dibuat di Supabase.
 
 ## Pengelolaan
-- **Produk & Stok**: tambah, edit, hapus, ubah harga, foto, spesifikasi, dan status tersedia/terjual.
+- **Produk & Stok**: tambah, edit, hapus, ubah harga, pilih foto langsung dari perangkat, spesifikasi, dan status tersedia/terjual.
+- **Foto katalog**: pelanggan dapat mengetuk foto akun untuk melihatnya dalam ukuran besar.
 - **Riwayat Pesanan**: catat pesanan manual yang masuk melalui WhatsApp; ubah status Menunggu/Diproses/Selesai/Dibatalkan.
 - **Pengaturan Toko**: ubah nama toko dan kontak.
 
 ## Batasan yang perlu diketahui
 1. Riwayat pesanan **tidak otomatis ditarik dari WhatsApp**. Admin perlu mencatatnya sendiri di dashboard. Integrasi otomatis memerlukan WhatsApp Business Platform/API dan konfigurasi tambahan.
 2. File ini adalah **dashboard admin**. Katalog publik pelanggan perlu dihubungkan ke tabel `products` agar perubahan admin langsung tampil di halaman toko publik. Keduanya bisa di-host di GitHub Pages yang sama, tetapi halaman publik dan dashboard perlu dibuat sebagai bagian frontend terpisah.
-3. Foto produk pada versi ini menggunakan URL gambar langsung, bukan upload file ke storage. Upload foto langsung bisa ditambahkan dengan Supabase Storage.
+3. Foto produk diunggah langsung dari HP/komputer ke Supabase Storage bucket `product-images` (maksimal 5 MB per foto). Jalankan bagian Storage pada `supabase-schema.sql` satu kali jika bucket belum dibuat. Foto publik dapat dilihat pembeli; hanya user login yang dapat mengunggah/mengubah/menghapus foto.
 4. Setup SQL saat ini memberi hak CRUD kepada seluruh user terautentikasi. Karena hanya admin yang boleh dibuat, nonaktifkan pendaftaran publik dan jangan membuat user lain. Untuk toko multi-admin, ganti kebijakan dengan pembatasan role/admin yang lebih ketat.
 5. Jangan masukkan password akun game, OTP, email pemulihan, atau data rahasia ke catatan pesanan.
 6. Pastikan penjualan/pengalihan akun sesuai aturan dari masing-masing game.

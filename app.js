@@ -57,7 +57,23 @@ function renderPublicCatalog(){
   const tgUser=(settings.telegram||"@fadstore").replace(/^@/,"");
   return '<article class="public-product-card '+(sold?"is-sold":"")+'"><div class="public-product-image">'+image+(sold?'<span class="sold-overlay">TERJUAL</span>':'<span class="ready-pill"><i></i> READY</span>')+'</div><div class="public-product-info"><span class="game-label"><img src="'+gameLogo(p.game)+'" alt="">'+esc(p.game)+'</span><h3 class="product-name">'+esc(p.name)+'</h3>'+(longName?'<button type="button" class="name-toggle" aria-expanded="false">Lihat selengkapnya</button>':'')+'<p>'+esc([p.rank,p.level,p.items].filter(Boolean).join(" • ")||"Detail akun dapat ditanyakan ke admin")+'</p><div class="public-product-bottom"><b>'+money(p.price)+'</b>'+(sold?'<span class="sold-note">Akun ini sudah terjual</span>':'<div class="product-contact-actions"><a class="contact-btn wa-btn" href="https://wa.me/'+esc((settings.whatsapp||"6285273114090").replace(/\\D/g,""))+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("wa")+' WhatsApp</a><a class="contact-btn tg-btn" href="https://t.me/'+encodeURIComponent(tgUser)+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("tg")+' Telegram</a></div>')+'</div></div></article>';
  }).join("");
+ const track=$("public-products");
+ track.scrollLeft=0;
+ const status=$("catalog-slide-status");
+ if(status)status.textContent=list.length+" akun · geser untuk melihat";
+ const prev=$("catalog-prev"),next=$("catalog-next");
+ if(prev)prev.disabled=list.length===0;
+ if(next)next.disabled=list.length===0;
 }
+
+$("public-products").addEventListener("scroll",()=>{
+ const track=$("public-products"),status=$("catalog-slide-status");
+ if(!track||!status)return;
+ const max=Math.max(0,track.scrollWidth-track.clientWidth);
+ status.textContent=max<8?"Semua akun terlihat":Math.round(track.scrollLeft/max*100)+"% · geser untuk lanjut";
+},{passive:true});
+$("catalog-prev").addEventListener("click",()=>$("public-products").scrollBy({left:-$("public-products").clientWidth*.82,behavior:"smooth"}));
+$("catalog-next").addEventListener("click",()=>$("public-products").scrollBy({left:$("public-products").clientWidth*.82,behavior:"smooth"}));
 
 $("public-products").addEventListener("click",e=>{
  const toggle=e.target.closest(".name-toggle");

@@ -919,3 +919,65 @@ td{color:#e5edff!important;border-color:#263653!important}
 @media(max-width:760px){
  .store-hero{background:radial-gradient(ellipse at 10% 10%,#5835a52b,transparent 42%),radial-gradient(ellipse at 90% 25%,#0ea5e92a,transparent 40%),linear-gradient(145deg,#0b1020,#111a31)!important}
 }
+
+
+/* FINAL MIDNIGHT GAMING POLISH — remove legacy gold/yellow accents */
+:root{
+  --bg:#0b1020!important;
+  --surface:#121a2e!important;
+  --surface2:#18233b!important;
+  --line:#293653!important;
+  --text:#f4f7ff!important;
+  --muted:#a4b0c7!important;
+  --red:#8b5cf6!important;
+  --green:#4ade80!important;
+}
+.brand>span:last-child>span{color:#a78bfa!important}
+.brand-mark,.avatar,.top-avatar{
+  background:linear-gradient(135deg,#8b5cf6,#2563eb)!important;
+  color:#fff!important;box-shadow:0 8px 24px #8b5cf633!important;
+}
+.store-header nav a:hover,.store-footer>a:last-child:hover{color:#c4b5fd!important}
+.btn.primary,.primary,#p-image-file::file-selector-button{
+  color:#fff!important;
+  background:linear-gradient(110deg,#7c3aed,#4f46e5 55%,#0284c7)!important;
+  border-color:transparent!important;
+  box-shadow:0 8px 24px #4f46e533!important;
+}
+.btn.primary:hover,.primary:hover{filter:brightness(1.12)!important}
+.secondary{background:#17223a!important;border-color:#354568!important;color:#eaf1ff!important}
+.secondary:hover{border-color:#8b5cf6!important}
+.hero-copy .eyebrow,.catalog-heading .eyebrow,.page-heading .eyebrow,
+.admin-login-drawer .eyebrow,.how-order .eyebrow{color:#a78bfa!important}
+.eyebrow-line{background:#8b5cf6!important}
+.hero-copy h1 em,.public-product-bottom>b,.text-btn,.login-text-link{color:#c4b5fd!important}
+.hero-copy h1 em{
+  background:linear-gradient(100deg,#c4b5fd,#8b5cf6 55%,#67e8f9)!important;
+  background-clip:text!important;-webkit-background-clip:text!important;
+}
+.catalog-tools input:focus,.catalog-tools select:focus,.list-tools input:focus,
+.list-tools select:focus,.settings-panel input:focus,
+.admin-login-drawer input:focus,.modal input:focus,.modal select:focus,.modal textarea:focus{
+  border-color:#8b5cf6!important;box-shadow:0 0 0 3px #8b5cf626!important;
+}
+.slider-hint-icon{border-color:#6650a0!important;background:#8b5cf61c!important;color:#c4b5fd!important}
+.slider-controls button:hover:not(:disabled){background:#7045d5!important;border-color:#8b5cf6!important;color:#fff!important}
+.public-product-card:hover{border-color:#8b5cf6!important}
+.public-product-card:before{background:linear-gradient(90deg,transparent,#a78bfa99,#38bdf866,transparent)!important}
+.game-label{color:#c4b5fd!important;background:#8b5cf61b!important;border-color:#8b5cf64d!important}
+.name-toggle{color:#a78bfa!important}
+.order-steps b,.quick-action i,.stat-card>i{color:#a78bfa!important}
+.order-steps>div:hover,.mini-btn:hover{border-color:#8b5cf6!important}
+.badge.pending{background:#29234a!important;color:#d8ccff!important}
+.notice{background:#201d3b!important;border-color:#574a91!important;color:#ddd2ff!important}
+.toast{border-color:#52658d!important}
+#p-image-file{border-color:#405174!important}
+#p-image-file::file-selector-button{color:#fff!important}
+@media(max-width:760px){
+ .store-hero{
+   background:
+    radial-gradient(ellipse at 82% 12%,#5835a52b,transparent 42%),
+    radial-gradient(ellipse at 10% 80%,#0ea5e91c,transparent 42%),
+    linear-gradient(145deg,#0b1020,#111a31)!important;
+ }
+}

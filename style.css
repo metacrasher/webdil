@@ -229,3 +229,9 @@ body{background:#080d18;font-family:Inter,"Segoe UI",Arial,sans-serif}
 #p-image-file::file-selector-button{margin-right:12px;padding:9px 13px;border:0;border-radius:7px;background:#f06a87;color:#fff;font-weight:800;cursor:pointer}
 .public-product-image .product-photo{cursor:zoom-in}
 @media(max-width:650px){.feature-logos>div,.feature-logos>div:last-child{height:54px}.image-lightbox{padding:55px 12px 20px}.image-lightbox>img{max-width:96vw;max-height:78vh}.zoom-hint{opacity:1;transform:none}}
+
+/* Ensure monochrome official wordmarks remain legible on the dark storefront */
+.game-brand img[src*="wildflamestudio"],
+.feature-logos img[src*="wildflamestudio"],
+.game-brand img[src*="wikimedia.org"],
+.feature-logos img[src*="wikimedia.org"]{filter:brightness(0) invert(1) drop-shadow(0 2px 5px #0008)}

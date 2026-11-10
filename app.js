@@ -17,7 +17,7 @@ function needConfig(){if(!CONFIGURED){$("login-error").textContent="Layanan admi
 let publicProducts=[];
 function gameLogo(game){
  if(game==="Free Fire")return "https://cdn.wildflamestudio.com/common/web_event/official2.ff.garena.all/img/20228/eb56db6919078b837ffd2e6a3b7e4aac.jpg";
- if(game==="Mobile Legends")return "https://www.svgrepo.com/show/517888/mobile-legends-bang-bang.svg";
+ if(game==="Mobile Legends")return "https://commons.wikimedia.org/wiki/Special:FilePath/MobileIsLegends.png";
  return "https://commons.wikimedia.org/wiki/Special:FilePath/Roblox_Logo_2022.svg";
 }
 function gameMark(game){return game==="Free Fire"?"FF":game==="Mobile Legends"?"ML":"R"}

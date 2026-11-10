@@ -981,3 +981,27 @@ td{color:#e5edff!important;border-color:#263653!important}
     linear-gradient(145deg,#0b1020,#111a31)!important;
  }
 }
+
+
+/* FADSTORE HERO ART — anime cyberpunk background */
+.store-hero{
+  position:relative;
+  isolation:isolate;
+  min-height:520px;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,rgba(7,11,25,.98) 0%,rgba(7,11,25,.88) 38%,rgba(7,11,25,.34) 72%,rgba(7,11,25,.18) 100%),
+    url('/fadstore-hero.webp') center right/cover no-repeat!important;
+}
+.store-hero .hero-copy{position:relative;z-index:2;max-width:660px}
+.store-hero:before{z-index:0}
+.store-hero:after{z-index:0}
+@media(max-width:760px){
+  .store-hero{
+    min-height:540px;
+    background:
+      linear-gradient(90deg,rgba(7,11,25,.96),rgba(7,11,25,.78)),
+      url('/fadstore-hero.webp') 63% center/cover no-repeat!important;
+  }
+  .store-hero .hero-copy{max-width:100%}
+}

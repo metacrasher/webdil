@@ -11,10 +11,10 @@
   <header class="store-header">
     <a class="brand" href="#"><span class="brand-mark">F</span><span>FAD<span>STORE</span><small>GAME ACCOUNT MARKET</small></span></a>
     <nav><a href="#katalog">Katalog Akun</a><a href="#cara-order">Cara Order</a></nav>
-    <button id="open-admin-login" class="btn secondary">Login Admin <span>↗</span></button>
+    <button id="open-admin-login" class="btn secondary"><span id="store-access-label">Login Admin</span> <span>↗</span></button>
   </header>
   <section class="store-hero">
-    <div class="hero-copy"><div class="eyebrow">WELCOME TO FADSTORE</div><h1>Temukan akun game<br><em>impianmu.</em></h1><p>Pilih akun favoritmu, cek stok yang tersedia, lalu hubungi admin untuk proses pembelian yang mudah dan aman.</p><a class="btn primary" href="#katalog">Lihat Katalog <span>↓</span></a><div class="hero-tags"><span>FREE FIRE</span><span>MOBILE LEGENDS</span><span>ROBLOX</span></div></div>
+    <div class="hero-copy"><div class="eyebrow">WELCOME TO FADSTORE</div><h1>Temukan akun game<br><em>impianmu.</em></h1><p>Pilih akun favoritmu, cek stok yang tersedia, lalu hubungi admin untuk proses pembelian yang mudah dan aman.</p><a class="btn primary" href="#katalog">Lihat Katalog <span>↓</span></a><div class="hero-tags game-brand-row"><span class="game-brand ff-brand"><b>FF</b> FREE FIRE</span><span class="game-brand ml-brand"><b>ML</b> MOBILE LEGENDS</span><span class="game-brand roblox-brand"><b>◇</b> ROBLOX</span></div></div>
     <div class="hero-art"><div class="hero-glow"></div><div class="hero-card"><span class="hero-card-label">FADSTORE COLLECTION</span><div class="hero-game-symbol">F</div><b>LEVEL UP<br>YOUR GAME.</b><small>AKUN PILIHAN • STOK TERSEDIA</small></div></div>
   </section>
   <section class="catalog-section" id="katalog">
@@ -22,8 +22,8 @@
     <div class="catalog-tools"><input id="public-search" placeholder="Cari nama akun..."><select id="public-game-filter"><option value="all">Semua Game</option><option>Free Fire</option><option>Mobile Legends</option><option>Roblox</option></select></div>
     <div id="public-products" class="public-product-grid"><div class="catalog-loading">Memuat katalog FadStore...</div></div>
   </section>
-  <section class="how-order" id="cara-order"><div><div class="eyebrow">SIMPLE & EASY</div><h2>Cara Order</h2><p>Pilih akun yang tersedia, tekan tombol pesan, lalu lanjutkan percakapan dengan admin FadStore melalui WhatsApp.</p></div><div class="order-steps"><div><b>01</b><span>Pilih akun game</span></div><div><b>02</b><span>Hubungi admin</span></div><div><b>03</b><span>Konfirmasi detail akun</span></div></div></section>
-  <footer class="store-footer"><a class="brand" href="#"><span class="brand-mark">F</span><span>FAD<span>STORE</span><small>GAME ACCOUNT MARKET</small></span></a><span>© 2026 FadStore. All rights reserved.</span><a href="https://t.me/fadstore" target="_blank" rel="noopener">Telegram @fadstore</a></footer>
+  <section class="how-order" id="cara-order"><div><div class="eyebrow">SIMPLE & EASY</div><h2>Cara Order</h2><p>Pilih akun yang tersedia, lalu hubungi admin FadStore melalui WhatsApp atau Telegram.</p></div><div class="order-steps"><div><b>01</b><span>Pilih akun game</span></div><div><b>02</b><span>Hubungi admin</span></div><div><b>03</b><span>Konfirmasi detail akun</span></div></div></section>
+  <footer class="store-footer"><a class="brand" href="#"><span class="brand-mark">F</span><span>FAD<span>STORE</span><small>GAME ACCOUNT MARKET</small></span></a><span>© 2026 FadStore. All rights reserved.</span><div class="footer-social"><a class="social-link telegram-link" href="https://t.me/fadstore" target="_blank" rel="noopener"><span class="social-icon">➤</span> Telegram</a><a class="social-link whatsapp-link" href="https://wa.me/6285273114090" target="_blank" rel="noopener"><span class="social-icon">◉</span> WhatsApp</a></div></footer>
 </div>
 <div class="admin-login-backdrop" id="admin-login-panel">
   <button class="login-scrim" type="button" data-close-login aria-label="Tutup login admin"></button>
@@ -45,7 +45,7 @@
     <div class="sidebar-bottom"><div class="admin-chip"><span class="avatar">F</span><div><b>fadstore</b><small>Administrator</small></div></div><button id="logout" class="logout">↪ Keluar</button></div>
   </aside>
   <main class="main">
-    <header class="topbar"><button id="mobile-menu" class="mobile-menu">☰</button><div><span class="crumb">FADSTORE /</span> <b id="page-name">Ringkasan</b></div><div class="top-right"><span class="status-dot"></span><span>Admin aktif</span><span class="top-avatar">F</span></div></header>
+    <header class="topbar"><button id="mobile-menu" class="mobile-menu">☰</button><div><span class="crumb">FADSTORE /</span> <b id="page-name">Ringkasan</b></div><div class="top-right"><button type="button" id="preview-store" class="btn secondary preview-store-btn">Lihat Halaman Utama ↗</button><span class="status-dot"></span><span>Admin aktif</span><span class="top-avatar">F</span></div></header>
     <section class="page active" id="page-overview">
       <div class="page-heading"><div><div class="eyebrow">STORE OVERVIEW</div><h1>Ringkasan Toko</h1><p>Pantau performa katalog dan pesanan FadStore.</p></div><button class="btn primary" data-go="products">+ Tambah Produk</button></div>
       <div class="stat-grid"><article class="stat-card"><span>Total Produk</span><b id="stat-products">0</b><small>Semua katalog</small><i>◇</i></article><article class="stat-card"><span>Stok Tersedia</span><b id="stat-stock">0</b><small>Akun siap dipesan</small><i class="green">●</i></article><article class="stat-card"><span>Produk Terjual</span><b id="stat-sold">0</b><small>Ditandai terjual</small><i>↗</i></article><article class="stat-card"><span>Pesanan Masuk</span><b id="stat-orders">0</b><small>Riwayat pesanan</small><i>▤</i></article></div>

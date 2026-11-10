@@ -22,8 +22,9 @@ function contactIcon(type){
 }
 function imageUrl(raw){
  const value=String(raw||"").trim();
- const drive=value.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([a-zA-Z0-9_-]+)/);
+ const drive=value.match(/drive\.google\.com\/(?:file\/d\/|open\?|uc\?)[^#]*?(?:id=)?([a-zA-Z0-9_-]{15,})/);
  if(drive)return "https://drive.google.com/uc?export=view&id="+drive[1];
+ if(value.includes("dropbox.com/"))return value.replace("www.dropbox.com","dl.dropboxusercontent.com").replace(/[?&]dl=0/,"?raw=1");
  return value;
 }
 function renderPublicCatalog(){
@@ -36,7 +37,7 @@ function renderPublicCatalog(){
   const image=src?'<img src="'+esc(src)+'" alt="'+esc(p.name)+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add(\'image-failed\');this.remove()">':'<div class="product-placeholder"><span>'+esc(p.game)+'</span><b>'+gameMark(p.game)+'</b></div>';
   const message=encodeURIComponent("Halo FadStore, saya tertarik membeli akun: "+p.name+" ("+p.game+") dengan harga "+money(p.price)+". Apakah masih tersedia?");
   const tgUser=(settings.telegram||"@fadstore").replace(/^@/,"");
-  return '<article class="public-product-card"><div class="public-product-image">'+image+'<span class="ready-pill"><i></i> READY</span></div><div class="public-product-info"><span class="game-label">'+esc(p.game)+'</span><h3>'+esc(p.name)+'</h3><p>'+esc([p.rank,p.level,p.items].filter(Boolean).join(" • ")||"Detail akun dapat ditanyakan ke admin")+'</p><div class="public-product-bottom"><b>'+money(p.price)+'</b><div class="product-contact-actions"><a class="contact-btn wa-btn" href="https://wa.me/6285273114090?text='+message+'" target="_blank" rel="noopener">'+contactIcon("wa")+' WhatsApp</a><a class="contact-btn tg-btn" href="https://t.me/'+encodeURIComponent(tgUser)+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("tg")+' Telegram</a></div></div></div></article>';
+  return '<article class="public-product-card"><div class="public-product-image">'+image+'<span class="ready-pill"><i></i> READY</span></div><div class="public-product-info"><span class="game-label">'+esc(p.game)+'</span><h3>'+esc(p.name)+'</h3><p>'+esc([p.rank,p.level,p.items].filter(Boolean).join(" • ")||"Detail akun dapat ditanyakan ke admin")+'</p><div class="public-product-bottom"><b>'+money(p.price)+'</b><div class="product-contact-actions"><a class="contact-btn wa-btn" href="https://wa.me/'+esc((settings.whatsapp||"6285273114090").replace(/\\D/g,""))+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("wa")+' WhatsApp</a><a class="contact-btn tg-btn" href="https://t.me/'+encodeURIComponent(tgUser)+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("tg")+' Telegram</a></div></div></div></article>';
  }).join("");
 }
 async function loadPublicCatalog(){

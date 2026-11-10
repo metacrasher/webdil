@@ -49,13 +49,13 @@ function productImageMarkup(p){
 function renderPublicCatalog(){
  const q=$("public-search").value.toLowerCase(),g=$("public-game-filter").value;
  const list=publicProducts.filter(p=>((""+p.name+" "+p.game+" "+(p.rank||"")+" "+(p.items||"")).toLowerCase().includes(q))&&(g==="all"||p.game===g));
- $("public-stock-count").textContent=publicProducts.length+" akun ready";
- if(!list.length){$("public-products").innerHTML='<div class="catalog-empty">Belum ada akun yang ready untuk kategori ini. Coba cek kembali nanti, ya.</div>';return}
+ $("public-stock-count").textContent=publicProducts.filter(p=>p.stock).length+" akun ready";
+ if(!list.length){$("public-products").innerHTML='<div class="catalog-empty">Belum ada akun untuk kategori ini. Coba cek kembali nanti, ya.</div>';return}
  $("public-products").innerHTML=list.map(p=>{
-  const image=productImageMarkup(p);
+  const image=productImageMarkup(p),sold=!p.stock;
   const message=encodeURIComponent("Halo FadStore, saya tertarik membeli akun: "+p.name+" ("+p.game+") dengan harga "+money(p.price)+". Apakah masih tersedia?");
   const tgUser=(settings.telegram||"@fadstore").replace(/^@/,"");
-  return '<article class="public-product-card"><div class="public-product-image">'+image+'<span class="ready-pill"><i></i> READY</span></div><div class="public-product-info"><span class="game-label"><img src="'+gameLogo(p.game)+'" alt="">'+esc(p.game)+'</span><h3>'+esc(p.name)+'</h3><p>'+esc([p.rank,p.level,p.items].filter(Boolean).join(" • ")||"Detail akun dapat ditanyakan ke admin")+'</p><div class="public-product-bottom"><b>'+money(p.price)+'</b><div class="product-contact-actions"><a class="contact-btn wa-btn" href="https://wa.me/'+esc((settings.whatsapp||"6285273114090").replace(/\D/g,""))+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("wa")+' WhatsApp</a><a class="contact-btn tg-btn" href="https://t.me/'+encodeURIComponent(tgUser)+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("tg")+' Telegram</a></div></div></div></article>';
+  return '<article class="public-product-card '+(sold?"is-sold":"")+'"><div class="public-product-image">'+image+(sold?'<span class="sold-overlay">TERJUAL</span>':'<span class="ready-pill"><i></i> READY</span>')+'</div><div class="public-product-info"><span class="game-label"><img src="'+gameLogo(p.game)+'" alt="">'+esc(p.game)+'</span><h3>'+esc(p.name)+'</h3><p>'+esc([p.rank,p.level,p.items].filter(Boolean).join(" • ")||"Detail akun dapat ditanyakan ke admin")+'</p><div class="public-product-bottom"><b>'+money(p.price)+'</b>'+(sold?'<span class="sold-note">Akun ini sudah terjual</span>':'<div class="product-contact-actions"><a class="contact-btn wa-btn" href="https://wa.me/'+esc((settings.whatsapp||"6285273114090").replace(/\\D/g,""))+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("wa")+' WhatsApp</a><a class="contact-btn tg-btn" href="https://t.me/'+encodeURIComponent(tgUser)+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("tg")+' Telegram</a></div>')+'</div></div></article>';
  }).join("");
 }
 
@@ -65,7 +65,7 @@ $("image-lightbox").addEventListener("click",e=>{if(e.target.id==="image-lightbo
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeImageLightbox()});
 async function loadPublicCatalog(){
  if(!db){$("public-stock-count").textContent="Katalog FadStore";$("public-products").innerHTML='<div class="catalog-empty">Katalog sedang disiapkan. Silakan hubungi admin melalui Telegram @fadstore.</div>';return}
- const {data,error}=await db.from("products").select("id,game,name,price,stock,rank,level,items,image").eq("stock",true).order("created_at",{ascending:false});
+ const {data,error}=await db.from("products").select("id,game,name,price,stock,rank,level,items,image").order("created_at",{ascending:false});
  if(error){$("public-stock-count").textContent="Stok belum dapat dimuat";$("public-products").innerHTML='<div class="catalog-empty">Katalog belum dapat dimuat. Pengelola perlu mengaktifkan akses baca katalog publik di database.</div>';return}
  publicProducts=data||[];renderPublicCatalog();
 }

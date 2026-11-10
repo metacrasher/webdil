@@ -5,9 +5,33 @@ const $=id=>document.getElementById(id);
 const money=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(n)||0);
 function toast(s){const t=$("toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000)}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function showLogin(){ $("login-view").hidden=false;$("app-view").hidden=true}
-function showApp(){ $("login-view").hidden=true;$("app-view").hidden=false;loadAll()}
-function needConfig(){if(!CONFIGURED){$("login-error").textContent="Supabase belum dikonfigurasi. Ikuti README-PANDUAN.md untuk menghubungkan database dan membuat akun admin.";return true}return false}
+function showLogin(){ $("store-view").hidden=false;$("app-view").hidden=true;$("admin-login-panel").classList.remove("open");loadPublicCatalog()}
+function showApp(){ $("store-view").hidden=true;$("app-view").hidden=false;$("admin-login-panel").classList.remove("open");loadAll()}
+function openAdminLogin(){ $("login-error").textContent="";$("admin-login-panel").classList.add("open");setTimeout(()=>$("login-email").focus(),180)}
+document.querySelectorAll("[data-close-login]").forEach(b=>b.addEventListener("click",()=>$("admin-login-panel").classList.remove("open")));
+$("open-admin-login").addEventListener("click",openAdminLogin);
+
+function needConfig(){if(!CONFIGURED){$("login-error").textContent="Layanan admin belum dikonfigurasi. Silakan hubungi pengelola toko.";return true}return false}
+let publicProducts=[];
+function renderPublicCatalog(){
+ const q=$("public-search").value.toLowerCase(),g=$("public-game-filter").value;
+ const list=publicProducts.filter(p=>(`${p.name} ${p.game} ${p.rank||""} ${p.items||""}`.toLowerCase().includes(q))&&(g==="all"||p.game===g));
+ $("public-stock-count").textContent=`${publicProducts.length} akun ready`;
+ if(!list.length){$("public-products").innerHTML='<div class="catalog-empty">Belum ada akun yang ready untuk kategori ini. Coba cek kembali nanti, ya.</div>';return}
+ $("public-products").innerHTML=list.map(p=>{
+  const image=p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.name)+'" loading="lazy" onerror="this.style.display=\'none\'">':'<div class="product-placeholder"><span>'+esc(p.game)+'</span><b>F</b></div>';
+  const message=encodeURIComponent("Halo FadStore, saya tertarik membeli akun: "+p.name+" ("+p.game+") dengan harga "+money(p.price)+". Apakah masih tersedia?");
+  return '<article class="public-product-card"><div class="public-product-image">'+image+'<span class="ready-pill"><i></i> READY</span></div><div class="public-product-info"><span class="game-label">'+esc(p.game)+'</span><h3>'+esc(p.name)+'</h3><p>'+esc([p.rank,p.level,p.items].filter(Boolean).join(" • ")||"Detail akun dapat ditanyakan ke admin")+'</p><div class="public-product-bottom"><b>'+money(p.price)+'</b><a class="btn primary" href="https://wa.me/6285273114090?text='+message+'" target="_blank" rel="noopener">Pesan via WA ↗</a></div></div></article>';
+ }).join("");
+}
+async function loadPublicCatalog(){
+ if(!db){$("public-stock-count").textContent="Katalog FadStore";$("public-products").innerHTML='<div class="catalog-empty">Katalog sedang disiapkan. Silakan hubungi admin melalui Telegram @fadstore.</div>';return}
+ const {data,error}=await db.from("products").select("id,game,name,price,stock,rank,level,items,image").eq("stock",true).order("created_at",{ascending:false});
+ if(error){$("public-stock-count").textContent="Stok belum dapat dimuat";$("public-products").innerHTML='<div class="catalog-empty">Katalog belum dapat dimuat. Pengelola perlu mengaktifkan akses baca katalog publik di database.</div>';return}
+ publicProducts=data||[];renderPublicCatalog();
+}
+$("public-search").addEventListener("input",renderPublicCatalog);
+$("public-game-filter").addEventListener("change",renderPublicCatalog);
 $("login-form").addEventListener("submit",async e=>{e.preventDefault();$("login-error").textContent="";if(needConfig())return;const {data,error}=await db.auth.signInWithPassword({email:$("login-email").value.trim(),password:$("login-password").value});if(error){$("login-error").textContent=error.message;return}showApp()});
 $("logout").addEventListener("click",async()=>{await db.auth.signOut();showLogin()});
 function navigate(page){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));$("page-"+page).classList.add("active");document.querySelectorAll(".side-link").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("page-name").textContent=({overview:"Ringkasan",products:"Produk & Stok",orders:"Riwayat Pesanan",settings:"Pengaturan Toko"})[page];$("sidebar").classList.remove("open")}
@@ -34,5 +58,13 @@ $("order-search").addEventListener("input",renderOrders);$("order-status-filter"
 window.updateOrder=async(id,status)=>{const {error}=await db.from("orders").update({status}).eq("id",id);if(error){toast(error.message);return}toast("Status pesanan diperbarui");loadAll()};
 window.deleteOrder=async id=>{if(!confirm("Hapus catatan pesanan?"))return;const {error}=await db.from("orders").delete().eq("id",id);if(error){toast(error.message);return}loadAll()};
 $("settings-form").addEventListener("submit",async e=>{e.preventDefault();const rows=[{key:"store_name",value:$("setting-name").value.trim()},{key:"whatsapp",value:$("setting-wa").value.trim()},{key:"telegram",value:$("setting-telegram").value.trim()}];const {error}=await db.from("store_settings").upsert(rows);if(error){toast(error.message);return}toast("Pengaturan toko disimpan");loadAll()});
-async function init(){if(!CONFIGURED){showLogin();return}if(!window.supabase){$("login-error").textContent="Library Supabase gagal dimuat. Periksa koneksi internet.";return}db=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY);const {data:{session}}=await db.auth.getSession();if(session)showApp();else showLogin();db.auth.onAuthStateChange((_event,session)=>{if(session)showApp();else showLogin()})}
+async function init(){
+ if(!window.supabase){$("public-products").innerHTML='<div class="catalog-empty">Koneksi katalog gagal dimuat. Periksa koneksi internet.</div>';return}
+ if(CONFIGURED)db=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY);
+ if(!db){showLogin();return}
+ await loadPublicCatalog();
+ const {data:{session}}=await db.auth.getSession();
+ if(session)showApp();else showLogin();
+ db.auth.onAuthStateChange((_event,session)=>{if(session)showApp();else showLogin()});
+}
 init();

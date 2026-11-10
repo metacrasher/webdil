@@ -1,27 +1,42 @@
 const CFG=window.FADSTORE_CONFIG||{};
 const CONFIGURED=CFG.SUPABASE_URL&&CFG.SUPABASE_ANON_KEY&&!CFG.SUPABASE_URL.includes("ISI_")&&!CFG.SUPABASE_ANON_KEY.includes("ISI_");
-let db=null,products=[],orders=[],settings={store_name:"FadStore",whatsapp:"6285273114090",telegram:"@fadstore"};
+let db=null,products=[],orders=[],settings={store_name:"FadStore",whatsapp:"6285273114090",telegram:"@fadstore"},adminSession=false;
 const $=id=>document.getElementById(id);
 const money=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(n)||0);
 function toast(s){const t=$("toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000)}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function showLogin(){ $("store-view").hidden=false;$("app-view").hidden=true;$("admin-login-panel").classList.remove("open");loadPublicCatalog()}
-function showApp(){ $("store-view").hidden=true;$("app-view").hidden=false;$("admin-login-panel").classList.remove("open");loadAll()}
-function openAdminLogin(){ $("login-error").textContent="";$("admin-login-panel").classList.add("open");setTimeout(()=>$("login-email").focus(),180)}
+function showLogin(){adminSession=false;$("store-access-label").textContent="Login Admin";$("store-view").hidden=false;$("app-view").hidden=true;$("admin-login-panel").classList.remove("open");loadPublicCatalog()}
+function showApp(){adminSession=true;$("store-access-label").textContent="Kembali Dashboard";$("store-view").hidden=true;$("app-view").hidden=false;$("admin-login-panel").classList.remove("open");loadAll()}
+function showStorePreview(){if(!adminSession)return;$("app-view").hidden=true;$("store-view").hidden=false;$("admin-login-panel").classList.remove("open");$("store-access-label").textContent="Kembali Dashboard";loadPublicCatalog()}
+function openAdminLogin(){if(adminSession){showApp();return}$("login-error").textContent="";$("admin-login-panel").classList.add("open");setTimeout(()=>$("login-email").focus(),180)}
 document.querySelectorAll("[data-close-login]").forEach(b=>b.addEventListener("click",()=>$("admin-login-panel").classList.remove("open")));
 $("open-admin-login").addEventListener("click",openAdminLogin);
+$("preview-store").addEventListener("click",showStorePreview);
 
 function needConfig(){if(!CONFIGURED){$("login-error").textContent="Layanan admin belum dikonfigurasi. Silakan hubungi pengelola toko.";return true}return false}
 let publicProducts=[];
+function gameMark(game){return game==="Free Fire"?"FF":game==="Mobile Legends"?"ML":"R"}
+function contactIcon(type){
+ if(type==="wa")return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 2 17.7L.5 23.5l6-1.6A11.8 11.8 0 0 0 20.5 3.5ZM12 21a9 9 0 0 1-4.6-1.3l-.3-.2-3.5.9.9-3.4-.2-.4A9 9 0 1 1 12 21Zm5-6.7c-.3-.2-1.7-.9-2-.9s-.5-.2-.7.2-.8.9-1 1.1-.4.2-.7.1a7.4 7.4 0 0 1-2.2-1.4 8.2 8.2 0 0 1-1.5-1.9c-.2-.3 0-.5.2-.7l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-.9-2c-.2-.5-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.8 1.2 3.2 1.4 3.4a10.7 10.7 0 0 0 4.1 3.6c.6.3 1.1.5 1.5.6.6.2 1.2.2 1.7.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.1-1.4s-.2-.2-.5-.4Z"/></svg>';
+ return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.8 3.2 18.5 20c-.2 1.2-.9 1.5-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.2L5.9 13.5 1 12c-1.1-.3-1.1-1 .2-1.5L20.3 3c.9-.3 1.7.2 1.5.2Z"/></svg>';
+}
+function imageUrl(raw){
+ const value=String(raw||"").trim();
+ const drive=value.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([a-zA-Z0-9_-]+)/);
+ if(drive)return "https://drive.google.com/uc?export=view&id="+drive[1];
+ return value;
+}
 function renderPublicCatalog(){
  const q=$("public-search").value.toLowerCase(),g=$("public-game-filter").value;
- const list=publicProducts.filter(p=>(`${p.name} ${p.game} ${p.rank||""} ${p.items||""}`.toLowerCase().includes(q))&&(g==="all"||p.game===g));
- $("public-stock-count").textContent=`${publicProducts.length} akun ready`;
+ const list=publicProducts.filter(p=>((""+p.name+" "+p.game+" "+(p.rank||"")+" "+(p.items||"")).toLowerCase().includes(q))&&(g==="all"||p.game===g));
+ $("public-stock-count").textContent=publicProducts.length+" akun ready";
  if(!list.length){$("public-products").innerHTML='<div class="catalog-empty">Belum ada akun yang ready untuk kategori ini. Coba cek kembali nanti, ya.</div>';return}
  $("public-products").innerHTML=list.map(p=>{
-  const image=p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.name)+'" loading="lazy" onerror="this.style.display=\'none\'">':'<div class="product-placeholder"><span>'+esc(p.game)+'</span><b>F</b></div>';
+  const src=imageUrl(p.image);
+  const image=src?'<img src="'+esc(src)+'" alt="'+esc(p.name)+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add(\'image-failed\');this.remove()">':'<div class="product-placeholder"><span>'+esc(p.game)+'</span><b>'+gameMark(p.game)+'</b></div>';
   const message=encodeURIComponent("Halo FadStore, saya tertarik membeli akun: "+p.name+" ("+p.game+") dengan harga "+money(p.price)+". Apakah masih tersedia?");
-  return '<article class="public-product-card"><div class="public-product-image">'+image+'<span class="ready-pill"><i></i> READY</span></div><div class="public-product-info"><span class="game-label">'+esc(p.game)+'</span><h3>'+esc(p.name)+'</h3><p>'+esc([p.rank,p.level,p.items].filter(Boolean).join(" • ")||"Detail akun dapat ditanyakan ke admin")+'</p><div class="public-product-bottom"><b>'+money(p.price)+'</b><a class="btn primary" href="https://wa.me/6285273114090?text='+message+'" target="_blank" rel="noopener">Pesan via WA ↗</a></div></div></article>';
+  const tgUser=(settings.telegram||"@fadstore").replace(/^@/,"");
+  return '<article class="public-product-card"><div class="public-product-image">'+image+'<span class="ready-pill"><i></i> READY</span></div><div class="public-product-info"><span class="game-label">'+esc(p.game)+'</span><h3>'+esc(p.name)+'</h3><p>'+esc([p.rank,p.level,p.items].filter(Boolean).join(" • ")||"Detail akun dapat ditanyakan ke admin")+'</p><div class="public-product-bottom"><b>'+money(p.price)+'</b><div class="product-contact-actions"><a class="contact-btn wa-btn" href="https://wa.me/6285273114090?text='+message+'" target="_blank" rel="noopener">'+contactIcon("wa")+' WhatsApp</a><a class="contact-btn tg-btn" href="https://t.me/'+encodeURIComponent(tgUser)+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("tg")+' Telegram</a></div></div></div></article>';
  }).join("");
 }
 async function loadPublicCatalog(){

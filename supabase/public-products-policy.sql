@@ -11,6 +11,9 @@ to anon, authenticated
 using (true);
 
 -- Product images are intended to be visible in the public storefront.
+-- Public bucket access is read-only; uploads/deletes still require privileged access.
+update storage.buckets set public = true where id = 'product-images';
+
 -- Enable public reads only for objects in the product-images bucket.
 drop policy if exists "Public can view product images" on storage.objects;
 

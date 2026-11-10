@@ -1,0 +1,19 @@
+name: Validate Telegram bot
+on:
+  push:
+    paths:
+      - 'telegram-bot/**'
+      - '.github/workflows/telegram-bot-check.yml'
+  pull_request:
+    paths:
+      - 'telegram-bot/**'
+      - '.github/workflows/telegram-bot-check.yml'
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m py_compile telegram-bot/main.py

@@ -15,7 +15,11 @@ $("preview-store").addEventListener("click",showStorePreview);
 
 function needConfig(){if(!CONFIGURED){$("login-error").textContent="Layanan admin belum dikonfigurasi. Silakan hubungi pengelola toko.";return true}return false}
 let publicProducts=[];
-function gameLogo(game){return game==="Free Fire"?"assets/free-fire-logo.svg":game==="Mobile Legends"?"assets/mobile-legends-logo.svg":"assets/roblox-logo.svg"}
+function gameLogo(game){
+ if(game==="Free Fire")return "https://cdn.wildflamestudio.com/common/web_event/official2.ff.garena.all/img/20228/eb56db6919078b837ffd2e6a3b7e4aac.jpg";
+ if(game==="Mobile Legends")return "https://www.svgrepo.com/show/517888/mobile-legends-bang-bang.svg";
+ return "https://commons.wikimedia.org/wiki/Special:FilePath/Roblox_Logo_2022.svg";
+}
 function gameMark(game){return game==="Free Fire"?"FF":game==="Mobile Legends"?"ML":"R"}
 function contactIcon(type){
  if(type==="wa")return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 2 17.7L.5 23.5l6-1.6A11.8 11.8 0 0 0 20.5 3.5ZM12 21a9 9 0 0 1-4.6-1.3l-.3-.2-3.5.9.9-3.4-.2-.4A9 9 0 1 1 12 21Zm5-6.7c-.3-.2-1.7-.9-2-.9s-.5-.2-.7.2-.8.9-1 1.1-.4.2-.7.1a7.4 7.4 0 0 1-2.2-1.4 8.2 8.2 0 0 1-1.5-1.9c-.2-.3 0-.5.2-.7l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-.9-2c-.2-.5-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.8 1.2 3.2 1.4 3.4a10.7 10.7 0 0 0 4.1 3.6c.6.3 1.1.5 1.5.6.6.2 1.2.2 1.7.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.1-1.4s-.2-.2-.5-.4Z"/></svg>';

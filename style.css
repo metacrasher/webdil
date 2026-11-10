@@ -235,3 +235,10 @@ body{background:#080d18;font-family:Inter,"Segoe UI",Arial,sans-serif}
 .feature-logos img[src*="wildflamestudio"],
 .game-brand img[src*="wikimedia.org"],
 .feature-logos img[src*="wikimedia.org"]{filter:brightness(0) invert(1) drop-shadow(0 2px 5px #0008)}
+
+
+/* Tampilan produk yang sudah terjual */
+.public-product-card.is-sold{border-color:#8f3042;background:linear-gradient(160deg,#251923,#121827)}
+.public-product-card.is-sold .public-product-image:after{content:"";position:absolute;inset:0;background:rgba(35,5,13,.32);pointer-events:none}
+.sold-overlay{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-8deg);padding:12px 24px;border:2px solid #fff;border-radius:8px;background:#d7193f;color:#fff;font-size:clamp(17px,2vw,25px);font-weight:1000;letter-spacing:3px;text-shadow:0 2px 8px #650014;box-shadow:0 8px 28px #0008;pointer-events:none}
+.sold-note{display:block;width:100%;padding:10px 12px;border:1px solid #ef526b55;border-radius:8px;background:#491724;color:#ff8295;text-align:center;font-size:10px;font-weight:900;letter-spacing:.8px}

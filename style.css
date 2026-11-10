@@ -1065,3 +1065,7 @@ td{color:#e5edff!important;border-color:#263653!important}
   .hero-copy h1{font-size:27px!important}
   .hero-copy>p{font-size:10px!important}
 }
+
+/* Mobile Legends logo fallback */
+.game-logo-fallback{display:inline-grid;place-items:center;flex:0 0 auto;width:24px;height:24px;border-radius:7px;background:linear-gradient(145deg,#4fc7ff,#7557e8);color:#fff;font-size:10px;font-weight:1000;letter-spacing:-.5px;box-shadow:0 3px 10px #4c79d755}
+.game-logo-fallback.large{width:84px;height:84px;border-radius:20px;font-size:34px;box-shadow:0 12px 32px #4c79d755}

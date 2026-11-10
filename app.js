@@ -1,6 +1,6 @@
 const CFG=window.FADSTORE_CONFIG||{};
 const CONFIGURED=CFG.SUPABASE_URL&&CFG.SUPABASE_ANON_KEY&&!CFG.SUPABASE_URL.includes("ISI_")&&!CFG.SUPABASE_ANON_KEY.includes("ISI_");
-let db=null,products=[],orders=[],settings={store_name:"FadStore",whatsapp:"6285273114090",telegram:"@fadstore"},adminSession=false;
+let db=null,products=[],orders=[],settings={store_name:"FadStore",whatsapp:"6285273114090",telegram:"@fadstore"},adminSession=false,recoveryMode=false;
 const $=id=>document.getElementById(id);
 const money=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(n)||0);
 function toast(s){const t=$("toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000)}
@@ -92,6 +92,37 @@ async function loadPublicCatalog(){
 }
 $("public-search").addEventListener("input",renderPublicCatalog);
 $("public-game-filter").addEventListener("change",renderPublicCatalog);
+function setLoginMode(mode){
+ $("login-form").hidden=mode!=="login";$("reset-email-form").hidden=mode!=="reset";$("new-password-form").hidden=mode!=="new-password";
+ $("login-title").textContent=mode==="login"?"Login Admin":mode==="reset"?"Reset Password":"Buat Password Baru";
+ $("login-description").textContent=mode==="login"?"Masuk untuk mengelola produk, stok, dan pesanan FadStore.":mode==="reset"?"Masukkan email admin. Kami akan mengirim tautan untuk membuat password baru.":"Buat password baru untuk mengamankan akun administrator FadStore.";
+ $("login-error").textContent="";$("reset-email-message").textContent="";$("new-password-message").textContent="";
+}
+$("forgot-password").addEventListener("click",()=>{$("reset-email").value=$("login-email").value.trim();setLoginMode("reset")});
+document.querySelectorAll("[data-login-mode]").forEach(b=>b.addEventListener("click",()=>setLoginMode(b.dataset.loginMode)));
+$("reset-email-form").addEventListener("submit",async e=>{
+ e.preventDefault();$("reset-email-message").textContent="";
+ if(needConfig())return;
+ const email=$("reset-email").value.trim();
+ const redirectTo=window.location.origin+window.location.pathname;
+ const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo});
+ if(error){$("reset-email-message").textContent="Gagal mengirim email: "+error.message;return}
+ $("reset-email-message").textContent="Jika email terdaftar, tautan reset akan dikirim. Periksa kotak masuk atau folder spam.";
+});
+function openRecoveryForm(){
+ recoveryMode=true;adminSession=false;$("store-view").hidden=false;$("app-view").hidden=true;
+ $("admin-login-panel").classList.add("open");setLoginMode("new-password");
+}
+$("new-password-form").addEventListener("submit",async e=>{
+ e.preventDefault();$("new-password-message").textContent="";
+ const password=$("new-password").value,confirm=$("confirm-password").value;
+ if(password.length<8){$("new-password-message").textContent="Password minimal 8 karakter.";return}
+ if(password!==confirm){$("new-password-message").textContent="Konfirmasi password tidak sama.";return}
+ const {error}=await db.auth.updateUser({password});
+ if(error){$("new-password-message").textContent="Password gagal diperbarui: "+error.message;return}
+ recoveryMode=false;await db.auth.signOut();setLoginMode("login");$("login-error").textContent="Password berhasil diperbarui. Silakan login dengan password baru.";
+ $("admin-login-panel").classList.add("open");
+});
 $("login-form").addEventListener("submit",async e=>{e.preventDefault();$("login-error").textContent="";if(needConfig())return;const {data,error}=await db.auth.signInWithPassword({email:$("login-email").value.trim(),password:$("login-password").value});if(error){$("login-error").textContent=error.message;return}showApp()});
 $("logout").addEventListener("click",async()=>{await db.auth.signOut();showLogin()});
 function navigate(page){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));$("page-"+page).classList.add("active");document.querySelectorAll(".side-link").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("page-name").textContent=({overview:"Ringkasan",products:"Produk & Stok",orders:"Riwayat Pesanan",settings:"Pengaturan Toko"})[page];$("sidebar").classList.remove("open")}
@@ -149,9 +180,13 @@ async function init(){
  if(!window.supabase){$("public-products").innerHTML='<div class="catalog-empty">Koneksi katalog gagal dimuat. Periksa koneksi internet.</div>';return}
  if(CONFIGURED)db=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY);
  if(!db){showLogin();return}
+ db.auth.onAuthStateChange((event,session)=>{
+  if(event==="PASSWORD_RECOVERY"){openRecoveryForm();return}
+  if(recoveryMode)return;
+  if(session)showApp();else showLogin();
+ });
  await loadPublicCatalog();
  const {data:{session}}=await db.auth.getSession();
- if(session)showApp();else showLogin();
- db.auth.onAuthStateChange((_event,session)=>{if(session)showApp();else showLogin()});
+ if(!recoveryMode){if(session)showApp();else showLogin()}
 }
 init();

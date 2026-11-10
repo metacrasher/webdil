@@ -52,14 +52,19 @@ function renderPublicCatalog(){
  $("public-stock-count").textContent=publicProducts.filter(p=>p.stock).length+" akun ready";
  if(!list.length){$("public-products").innerHTML='<div class="catalog-empty">Belum ada akun untuk kategori ini. Coba cek kembali nanti, ya.</div>';return}
  $("public-products").innerHTML=list.map(p=>{
-  const image=productImageMarkup(p),sold=!p.stock;
+  const image=productImageMarkup(p),sold=!p.stock,longName=String(p.name||"").length>28;
   const message=encodeURIComponent("Halo FadStore, saya tertarik membeli akun: "+p.name+" ("+p.game+") dengan harga "+money(p.price)+". Apakah masih tersedia?");
   const tgUser=(settings.telegram||"@fadstore").replace(/^@/,"");
-  return '<article class="public-product-card '+(sold?"is-sold":"")+'"><div class="public-product-image">'+image+(sold?'<span class="sold-overlay">TERJUAL</span>':'<span class="ready-pill"><i></i> READY</span>')+'</div><div class="public-product-info"><span class="game-label"><img src="'+gameLogo(p.game)+'" alt="">'+esc(p.game)+'</span><h3>'+esc(p.name)+'</h3><p>'+esc([p.rank,p.level,p.items].filter(Boolean).join(" • ")||"Detail akun dapat ditanyakan ke admin")+'</p><div class="public-product-bottom"><b>'+money(p.price)+'</b>'+(sold?'<span class="sold-note">Akun ini sudah terjual</span>':'<div class="product-contact-actions"><a class="contact-btn wa-btn" href="https://wa.me/'+esc((settings.whatsapp||"6285273114090").replace(/\\D/g,""))+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("wa")+' WhatsApp</a><a class="contact-btn tg-btn" href="https://t.me/'+encodeURIComponent(tgUser)+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("tg")+' Telegram</a></div>')+'</div></div></article>';
+  return '<article class="public-product-card '+(sold?"is-sold":"")+'"><div class="public-product-image">'+image+(sold?'<span class="sold-overlay">TERJUAL</span>':'<span class="ready-pill"><i></i> READY</span>')+'</div><div class="public-product-info"><span class="game-label"><img src="'+gameLogo(p.game)+'" alt="">'+esc(p.game)+'</span><h3 class="product-name">'+esc(p.name)+'</h3>'+(longName?'<button type="button" class="name-toggle" aria-expanded="false">Lihat selengkapnya</button>':'')+'<p>'+esc([p.rank,p.level,p.items].filter(Boolean).join(" • ")||"Detail akun dapat ditanyakan ke admin")+'</p><div class="public-product-bottom"><b>'+money(p.price)+'</b>'+(sold?'<span class="sold-note">Akun ini sudah terjual</span>':'<div class="product-contact-actions"><a class="contact-btn wa-btn" href="https://wa.me/'+esc((settings.whatsapp||"6285273114090").replace(/\\D/g,""))+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("wa")+' WhatsApp</a><a class="contact-btn tg-btn" href="https://t.me/'+encodeURIComponent(tgUser)+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("tg")+' Telegram</a></div>')+'</div></div></article>';
  }).join("");
 }
 
-$("public-products").addEventListener("click",e=>{const btn=e.target.closest("[data-image-view]");if(!btn)return;const src=btn.dataset.imageView;$("lightbox-image").src=src;$("lightbox-caption").textContent=btn.dataset.imageTitle||"Foto akun";$("image-lightbox").classList.add("open");$("image-lightbox").setAttribute("aria-hidden","false")});
+$("public-products").addEventListener("click",e=>{
+ const toggle=e.target.closest(".name-toggle");
+ if(toggle){const title=toggle.previousElementSibling;const expanded=title.classList.toggle("name-expanded");toggle.textContent=expanded?"Tampilkan lebih sedikit":"Lihat selengkapnya";toggle.setAttribute("aria-expanded",String(expanded));return}
+ const btn=e.target.closest("[data-image-view]");if(!btn)return;
+ const src=btn.dataset.imageView;$("lightbox-image").src=src;$("lightbox-caption").textContent=btn.dataset.imageTitle||"Foto akun";$("image-lightbox").classList.add("open");$("image-lightbox").setAttribute("aria-hidden","false")
+});
 function closeImageLightbox(){$("image-lightbox").classList.remove("open");$("image-lightbox").setAttribute("aria-hidden","true");$("lightbox-image").src=""}
 $("image-lightbox").addEventListener("click",e=>{if(e.target.id==="image-lightbox"||e.target.classList.contains("lightbox-close"))closeImageLightbox()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeImageLightbox()});

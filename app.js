@@ -40,7 +40,7 @@ function imageUrl(raw){
 function productImageMarkup(p){
  const fallback=gameLogo(p.game),src=imageUrl(p.image);
  if(!src)return '<div class="product-logo-fallback"><img src="'+fallback+'" alt="'+esc(p.game)+'"></div>';
- return '<img class="product-photo" src="'+esc(src)+'" alt="'+esc(p.name)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.parentElement.classList.add(\'image-failed\');this.parentElement.innerHTML=\'<div class=&quot;product-logo-fallback&quot;><img src=&quot;'+fallback+'&quot; alt=&quot;'+esc(p.game)+'&quot;></div>\'">';
+ return '<button type="button" class="image-viewer" data-image-view="'+esc(src)+'" data-image-title="'+esc(p.name)+'" aria-label="Lihat foto '+esc(p.name)+'"><img class="product-photo" src="'+esc(src)+'" alt="'+esc(p.name)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.parentElement.outerHTML=\'<div class=&quot;product-logo-fallback&quot;><img src=&quot;'+fallback+'&quot; alt=&quot;'+esc(p.game)+'&quot;></div>\'"><span class="zoom-hint">⌕ Lihat foto</span></button>';
 }
 function renderPublicCatalog(){
  const q=$("public-search").value.toLowerCase(),g=$("public-game-filter").value;
@@ -54,6 +54,11 @@ function renderPublicCatalog(){
   return '<article class="public-product-card"><div class="public-product-image">'+image+'<span class="ready-pill"><i></i> READY</span></div><div class="public-product-info"><span class="game-label"><img src="'+gameLogo(p.game)+'" alt="">'+esc(p.game)+'</span><h3>'+esc(p.name)+'</h3><p>'+esc([p.rank,p.level,p.items].filter(Boolean).join(" • ")||"Detail akun dapat ditanyakan ke admin")+'</p><div class="public-product-bottom"><b>'+money(p.price)+'</b><div class="product-contact-actions"><a class="contact-btn wa-btn" href="https://wa.me/'+esc((settings.whatsapp||"6285273114090").replace(/\D/g,""))+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("wa")+' WhatsApp</a><a class="contact-btn tg-btn" href="https://t.me/'+encodeURIComponent(tgUser)+'?text='+message+'" target="_blank" rel="noopener">'+contactIcon("tg")+' Telegram</a></div></div></div></article>';
  }).join("");
 }
+
+$("public-products").addEventListener("click",e=>{const btn=e.target.closest("[data-image-view]");if(!btn)return;const src=btn.dataset.imageView;$("lightbox-image").src=src;$("lightbox-caption").textContent=btn.dataset.imageTitle||"Foto akun";$("image-lightbox").classList.add("open");$("image-lightbox").setAttribute("aria-hidden","false")});
+function closeImageLightbox(){$("image-lightbox").classList.remove("open");$("image-lightbox").setAttribute("aria-hidden","true");$("lightbox-image").src=""}
+$("image-lightbox").addEventListener("click",e=>{if(e.target.id==="image-lightbox"||e.target.classList.contains("lightbox-close"))closeImageLightbox()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeImageLightbox()});
 async function loadPublicCatalog(){
  if(!db){$("public-stock-count").textContent="Katalog FadStore";$("public-products").innerHTML='<div class="catalog-empty">Katalog sedang disiapkan. Silakan hubungi admin melalui Telegram @fadstore.</div>';return}
  const {data,error}=await db.from("products").select("id,game,name,price,stock,rank,level,items,image").eq("stock",true).order("created_at",{ascending:false});
@@ -77,16 +82,36 @@ function productRows(list){if(!list.length)return '<p class="muted-note">Belum a
 function renderProducts(){const q=$("product-search").value.toLowerCase(),st=$("product-filter").value,g=$("game-filter").value;let list=products.filter(p=>(`${p.name} ${p.game}`.toLowerCase().includes(q))&&(st==="all"||(st==="available"?p.stock:!p.stock))&&(g==="all"||p.game===g));$("products-table").innerHTML=productRows(list)}
 function renderRecent(){$("recent-products").innerHTML=productRows(products.slice(0,5))}
 ["product-search","product-filter","game-filter"].forEach(id=>$(id).addEventListener("input",renderProducts));
-$("add-product").addEventListener("click",()=>{ $("product-form").reset();$("p-id").value="";$("product-modal-title").textContent="Tambah Produk";$("p-stock").value="true";updateProductImagePreview();modal("product-modal",true)});
-window.editProduct=id=>{const p=products.find(x=>String(x.id)===String(id));if(!p)return;$("p-id").value=p.id;$("p-game").value=p.game;$("p-name").value=p.name;$("p-price").value=p.price;$("p-stock").value=String(p.stock);$("p-rank").value=p.rank||"";$("p-level").value=p.level||"";$("p-items").value=p.items||"";$("p-image").value=p.image||"";updateProductImagePreview();$("product-modal-title").textContent="Edit Produk";modal("product-modal",true)};
-function updateProductImagePreview(){
+$("add-product").addEventListener("click",()=>{ $("product-form").reset();$("p-id").value="";$("product-modal-title").textContent="Tambah Produk";$("p-stock").value="true";$("p-image-file").value="";$("p-image-current").value="";updateProductImagePreview();modal("product-modal",true)});
+window.editProduct=id=>{const p=products.find(x=>String(x.id)===String(id));if(!p)return;$("p-id").value=p.id;$("p-game").value=p.game;$("p-name").value=p.name;$("p-price").value=p.price;$("p-stock").value=String(p.stock);$("p-rank").value=p.rank||"";$("p-level").value=p.level||"";$("p-items").value=p.items||"";$("p-image-current").value=p.image||"";$("p-image-file").value="";updateProductImagePreview();$("product-modal-title").textContent="Edit Produk";modal("product-modal",true)};
+function updateProductImagePreview(file){
  const box=$("p-image-preview");if(!box)return;
- const src=imageUrl($("p-image").value);
- if(!src){box.innerHTML="<span>Pratinjau foto akan muncul di sini</span>";return}
- box.innerHTML='<img src="'+esc(src)+'" alt="Pratinjau foto" onerror="this.parentElement.innerHTML=\'<span class=&quot;preview-error&quot;>Link tidak dapat dibaca sebagai gambar. Gunakan URL gambar langsung atau ubah akses file menjadi publik.</span>\'">';
+ if(file){
+  const reader=new FileReader();reader.onload=()=>{box.innerHTML='<img src="'+reader.result+'" alt="Pratinjau foto">'};reader.readAsDataURL(file);return;
+ }
+ const current=$("p-image-current").value;
+ if(current){box.innerHTML='<img src="'+esc(current)+'" alt="Foto tersimpan">';return}
+ box.innerHTML="<span>Pilih foto untuk melihat pratinjau</span>";
 }
-$("p-image").addEventListener("input",updateProductImagePreview);
-$("product-form").addEventListener("submit",async e=>{e.preventDefault();const id=$("p-id").value;const row={game:$("p-game").value,name:$("p-name").value.trim(),price:Number($("p-price").value),stock:$("p-stock").value==="true",rank:$("p-rank").value.trim(),level:$("p-level").value.trim(),items:$("p-items").value.trim(),image:$("p-image").value.trim()||null};const result=id?await db.from("products").update(row).eq("id",id):await db.from("products").insert(row);if(result.error){$("product-error").textContent=result.error.message;return}modal("product-modal",false);toast("Produk berhasil disimpan");await loadAll()});
+$("p-image-file").addEventListener("change",()=>{
+ const file=$("p-image-file").files[0];
+ if(!file){updateProductImagePreview();return}
+ if(!/^image\/(jpeg|png|webp|avif)$/.test(file.type)||file.size>5*1024*1024){
+  $("p-image-file").value="";toast("Pilih JPG, PNG, WEBP, atau AVIF maksimal 5 MB.");return;
+ }
+ updateProductImagePreview(file);
+});
+async function uploadProductImage(file){
+ if(!file)return $("p-image-current").value||null;
+ const ext=({ "image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/avif":"avif"})[file.type];
+ const path=Date.now()+"-"+crypto.randomUUID()+"."+ext;
+ const {error}=await db.storage.from("product-images").upload(path,file,{cacheControl:"3600",upsert:false,contentType:file.type});
+ if(error)throw error;
+ const {data}=db.storage.from("product-images").getPublicUrl(path);
+ return data.publicUrl;
+}
+
+$("product-form").addEventListener("submit",async e=>{e.preventDefault();const id=$("p-id").value;let image;try{image=await uploadProductImage($("p-image-file").files[0])}catch(err){$("product-error").textContent="Foto gagal diunggah: "+err.message;return}const row={game:$("p-game").value,name:$("p-name").value.trim(),price:Number($("p-price").value),stock:$("p-stock").value==="true",rank:$("p-rank").value.trim(),level:$("p-level").value.trim(),items:$("p-items").value.trim(),image};const result=id?await db.from("products").update(row).eq("id",id):await db.from("products").insert(row);if(result.error){$("product-error").textContent=result.error.message;return}modal("product-modal",false);toast("Produk berhasil disimpan");await loadAll()});
 window.deleteProduct=async id=>{if(!confirm("Hapus produk ini secara permanen?"))return;const {error}=await db.from("products").delete().eq("id",id);if(error){toast(error.message);return}toast("Produk dihapus");loadAll()};
 $("add-order").addEventListener("click",()=>{$("order-form").reset();modal("order-modal",true)});
 $("order-form").addEventListener("submit",async e=>{e.preventDefault();const row={customer_name:$("o-customer").value.trim(),product_name:$("o-product").value.trim(),amount:Number($("o-price").value),status:$("o-status").value,note:$("o-note").value.trim()};const {error}=await db.from("orders").insert(row);if(error){toast(error.message);return}modal("order-modal",false);toast("Pesanan dicatat");loadAll()});

@@ -106,7 +106,7 @@ async def actions(u:Update,c:ContextTypes.DEFAULT_TYPE):
             p=await product(pid) if pid else None
             if not p: return await edit(q,"Produk tidak ditemukan.",InlineKeyboardMarkup([[InlineKeyboardButton("Daftar stok",callback_data="products")]]))
             kb=InlineKeyboardMarkup([[InlineKeyboardButton("🗑 Ya, hapus produk",callback_data="delete_confirm")],[InlineKeyboardButton("Batal",callback_data="p:"+str(pid))]])
-            await edit(q,f"⚠️ Konfirmasi hapus produk ini?\\n\\n{p.get('name')} — {p.get('game')}\\nTindakan ini tidak dapat dibatalkan.",kb)
+            await edit(q,f"⚠️ Konfirmasi hapus produk ini?\n\n{p.get('name')} — {p.get('game')}\nTindakan ini tidak dapat dibatalkan.",kb)
         elif a=="delete_confirm":
             pid=c.user_data.get("pid")
             if not pid: return await edit(q,"Produk tidak ditemukan.",menu())

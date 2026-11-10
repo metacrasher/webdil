@@ -38,6 +38,7 @@ drop policy if exists "Authenticated users manage products" on public.products;
 drop policy if exists "Authenticated users manage orders" on public.orders;
 drop policy if exists "Authenticated users manage settings" on public.store_settings;
 drop policy if exists "Public can view available products" on public.products;
+drop policy if exists "Public can view products and sold status" on public.products;
 
 -- Dashboard: hanya pengguna yang sudah login dapat mengelola data.
 create policy "Authenticated users manage products" on public.products
@@ -49,10 +50,10 @@ for all to authenticated using (true) with check (true);
 create policy "Authenticated users manage settings" on public.store_settings
 for all to authenticated using (true) with check (true);
 
--- Pengunjung tanpa login hanya dapat membaca produk yang stoknya READY.
-create policy "Public can view available products" on public.products
+-- Pengunjung dapat melihat produk READY maupun TERJUAL di katalog publik.
+create policy "Public can view products and sold status" on public.products
 for select to anon
-using (stock = true);
+using (true);
 
 -- Pastikan role anon memiliki izin SQL untuk menjalankan SELECT.
 grant select on public.products to anon;

@@ -29,8 +29,11 @@ async def req(method,path,params=None,json=None,headers=None,content=None):
         r=await c.request(method,API+"/"+path,params=params,json=json,headers=h,content=content)
         if r.is_error: raise RuntimeError(f"Supabase {r.status_code}: {r.text[:400]}")
         return r.json() if r.content else None
-async def rows(table,select="*",limit=100):
-    return await req("GET",table,{"select":select,"limit":limit,"order":"created_at.desc"})
+async def rows(table,select="*",limit=100,order="created_at.desc"):
+    params={"select":select,"limit":limit}
+    if order:
+        params["order"]=order
+    return await req("GET",table,params)
 async def product(pid):
     a=await req("GET","products",{"select":"*","id":"eq."+str(pid),"limit":1})
     return a[0] if a else None
@@ -99,8 +102,19 @@ async def actions(u:Update,c:ContextTypes.DEFAULT_TYPE):
             if p: await req("PATCH","products",{"id":"eq."+c.user_data["pid"]},{"stock":not bool(p.get("stock"))})
             await edit(q,"✅ Status stok diperbarui.",InlineKeyboardMarkup([[InlineKeyboardButton("Daftar stok",callback_data="products")]]))
         elif a=="delete":
-            await req("DELETE","products",{"id":"eq."+c.user_data["pid"]})
-            await edit(q,"🗑 Produk dihapus.",InlineKeyboardMarkup([[InlineKeyboardButton("Daftar stok",callback_data="products")]]))
+            pid=c.user_data.get("pid")
+            p=await product(pid) if pid else None
+            if not p: return await edit(q,"Produk tidak ditemukan.",InlineKeyboardMarkup([[InlineKeyboardButton("Daftar stok",callback_data="products")]]))
+            kb=InlineKeyboardMarkup([[InlineKeyboardButton("🗑 Ya, hapus produk",callback_data="delete_confirm")],[InlineKeyboardButton("Batal",callback_data="p:"+str(pid))]])
+            await edit(q,f"⚠️ Konfirmasi hapus produk ini?\\n\\n{p.get('name')} — {p.get('game')}\\nTindakan ini tidak dapat dibatalkan.",kb)
+        elif a=="delete_confirm":
+            pid=c.user_data.get("pid")
+            if not pid: return await edit(q,"Produk tidak ditemukan.",menu())
+            p=await product(pid)
+            if not p: return await edit(q,"Produk sudah tidak tersedia.",InlineKeyboardMarkup([[InlineKeyboardButton("Daftar stok",callback_data="products")]]))
+            await req("DELETE","products",{"id":"eq."+str(pid)})
+            c.user_data.pop("pid",None)
+            await edit(q,"🗑 Produk berhasil dihapus dari katalog.",InlineKeyboardMarkup([[InlineKeyboardButton("📦 Daftar stok",callback_data="products")],[InlineKeyboardButton("Menu",callback_data="home")]]))
         elif a in ("add","edit"):
             if a=="add": c.user_data["prod"]={}; c.user_data.pop("editing",None)
             else:
@@ -115,7 +129,7 @@ async def actions(u:Update,c:ContextTypes.DEFAULT_TYPE):
             await edit(q,"Kirim foto baru sebagai Photo Telegram. /skip untuk batal.")
             return PHOTO
         elif a=="settings":
-            ss=await rows("store_settings","key,value",50); c.user_data["settings"]={x["key"]:x["value"] for x in ss}
+            ss=await rows("store_settings","key,value",50,order=None); c.user_data["settings"]={x["key"]:x["value"] for x in ss}
             kb=InlineKeyboardMarkup([[InlineKeyboardButton("Nama toko",callback_data="s:store_name")],[InlineKeyboardButton("WhatsApp",callback_data="s:whatsapp")],[InlineKeyboardButton("Telegram",callback_data="s:telegram")],[InlineKeyboardButton("Menu",callback_data="home")]])
             await edit(q,"⚙️ Pilih pengaturan yang ingin diubah:",kb)
         elif a.startswith("s:"):

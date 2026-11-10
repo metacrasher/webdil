@@ -42,3 +42,10 @@ on conflict (key) do nothing;
 
 -- Setelah membuat user admin di Authentication, pastikan hanya akun admin
 -- yang dibuat/diberi akses. Jangan aktifkan pendaftaran publik.
+
+
+-- Katalog publik: pengunjung tanpa login hanya dapat membaca produk yang stoknya ready.
+drop policy if exists "Public can view available products" on public.products;
+create policy "Public can view available products"
+on public.products for select to anon
+using (stock = true);
